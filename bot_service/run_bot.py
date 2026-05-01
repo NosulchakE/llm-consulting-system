@@ -2,16 +2,10 @@
 import asyncio
 import sys
 import os
-import socket
-import ssl
-import aiohttp
-
-# Отключаем IPv6
-socket.setdefaulttimeout(30)
 
 sys.path.append(os.path.dirname(__file__))
 
-from app.bot.dispatcher import dp, bot
+from app.bot.dispatcher import dp, get_bot_instance
 from app.core.config import settings
 
 async def main():
@@ -20,6 +14,9 @@ async def main():
         return
     
     print("🤖 Запуск Telegram бота...")
+    
+    # Получаем бота
+    bot = get_bot_instance()
     
     try:
         # Проверяем бота
@@ -30,6 +27,8 @@ async def main():
         await dp.start_polling(bot)
     except Exception as e:
         print(f"❌ Ошибка: {e}")
+        import traceback
+        traceback.print_exc()
 
 if __name__ == "__main__":
     asyncio.run(main())
