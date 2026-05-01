@@ -1,6 +1,8 @@
 #!/bin/bash
 echo "🚀 Запуск сервисов..."
 
+mkdir -p logs 
+
 source auth_service/venv/bin/activate
 cd auth_service
 uvicorn app.main:app --port 8000 > ../logs/auth.log 2>&1 &
