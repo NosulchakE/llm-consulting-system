@@ -5,7 +5,7 @@ import os
 
 sys.path.append(os.path.dirname(__file__))
 
-from app.bot.dispatcher import dp, get_bot_instance
+from app.bot.dispatcher import dp, get_bot
 from app.core.config import settings
 
 async def main():
@@ -15,15 +15,12 @@ async def main():
     
     print("🤖 Запуск Telegram бота...")
     
-    # Получаем бота
-    bot = get_bot_instance()
+    # Получаем бота с прокси
+    bot = await get_bot()
     
     try:
-        # Проверяем бота
         me = await bot.get_me()
         print(f"✅ Бот запущен: @{me.username}")
-        
-        # Запускаем polling
         await dp.start_polling(bot)
     except Exception as e:
         print(f"❌ Ошибка: {e}")
