@@ -5,7 +5,7 @@ import os
 
 sys.path.append(os.path.dirname(__file__))
 
-from app.bot.dispatcher import dp, get_bot
+from app.bot.dispatcher import dp, bot
 from app.core.config import settings
 
 async def main():
@@ -14,9 +14,6 @@ async def main():
         return
     
     print("🤖 Запуск Telegram бота...")
-    
-    # Получаем бота с прокси
-    bot = await get_bot()
     
     try:
         me = await bot.get_me()
