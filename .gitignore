@@ -16,4 +16,4 @@ env/
 *.pid
 .DS_Store
 run_all.sh
-bot_service/run_bot.py
+
