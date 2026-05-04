@@ -11,15 +11,3 @@
 
 ## Быстрый старт
 
-```bash
-git clone https://github.com/YOUR_USERNAME/llm-consulting-system.git
-cd llm-consulting-system
-chmod +x *.sh
-./setup.sh
-# Отредактируйте bot_service/.env (добавьте TELEGRAM_BOT_TOKEN и OPENROUTER_API_KEY)
-./run_all.sh
-
-Проверка работы
-Auth Service Swagger: http://localhost:8000/docs
-
-RabbitMQ Management: http://localhost:15672 (guest/guest)
