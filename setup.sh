@@ -1,5 +1,5 @@
 #!/bin/bash
-echo "🚀 Установка LLM Consulting System..."
+echo "Установка LLM Consulting System..."
 
 # Установка Redis
 sudo apt update
@@ -30,4 +30,4 @@ uv pip install -e .
 deactivate
 cd ..
 
-echo "✅ Установка завершена!"
+echo "Установка завершена!"
