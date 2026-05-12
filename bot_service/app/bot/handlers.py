@@ -56,7 +56,6 @@ async def cmd_token(message: types.Message):
 
 @router.message()
 async def handle_message(message: types.Message):
-    # Проверяем токен в Redis
     redis = await get_redis()
     token = await redis.get(f"tg_token:{message.from_user.id}")
     
@@ -68,29 +67,15 @@ async def handle_message(message: types.Message):
         return
     
     try:
-        # Валидируем токен
         payload = decode_and_validate(token)
         user_id = payload.get("sub")
         role = payload.get("role", "user")
         
-        # ДЕМО-РЕЖИМ: имитация Celery задачи
-        await message.answer("🔄 [ДЕМО] Ваш запрос принят. Отправлено в Celery очередь...")
+        # Отправляем задачу в Celery
+        from app.tasks.llm_tasks import llm_request
+        llm_request.delay(message.from_user.id, message.text)
         
-        # Имитация асинхронной обработки
-        import asyncio
-        await asyncio.sleep(1)
-        
-        # Имитация ответа от LLM через OpenRouter
-        await message.answer(
-            f"🤖 [ДЕМО-ОТВЕТ LLM]\n\n"
-            f"Вы спросили: \"{message.text[:100]}{'...' if len(message.text) > 100 else ''}\"\n\n"
-            f"✅ Асинхронная обработка через Celery + RabbitMQ\n"
-            f"✅ JWT аутентификация: User {user_id} (role: {role})\n"
-            f"✅ Результат сохранен в Redis\n\n"
-            f"📌 В реальном режиме здесь был бы ответ от OpenRouter API"
-        )
-        
-        logger.info(f"Демо-ответ отправлен пользователю {user_id}")
+        await message.answer("🔄 Ваш запрос принят. Обрабатывается...")
         
     except ValueError as e:
         await message.answer(f"❌ Токен недействителен: {str(e)}")
