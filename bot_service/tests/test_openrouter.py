@@ -1,3 +1,4 @@
+from httpx import Response, TimeoutException
 import pytest
 import respx
 from httpx import TimeoutException
