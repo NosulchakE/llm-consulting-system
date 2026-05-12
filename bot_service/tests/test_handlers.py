@@ -50,20 +50,19 @@ async def test_handle_message_no_token(mock_message):
 @pytest.mark.asyncio
 async def test_handle_message_with_token(mock_message):
     token = jwt.encode({"sub": "123", "role": "user"}, settings.JWT_SECRET, algorithm=settings.JWT_ALG)
+    mock_message.text = "Тестовый вопрос"
+    
     with patch("app.bot.handlers.get_redis") as mock_redis, \
-         patch("app.bot.handlers.llm_request") as mock_llm:
+         patch("app.bot.handlers.llm_request.delay") as mock_delay:
         
         # Настраиваем мок Redis
         mock_redis_instance = AsyncMock()
         mock_redis_instance.get = AsyncMock(return_value=token)
         mock_redis.return_value = mock_redis_instance
         
-        # Настраиваем мок llm_request.delay
-        mock_llm.delay = MagicMock()
-        
         # Вызываем хендлер
         await handle_message(mock_message)
         
-        # Проверяем, что delay был вызван один раз с правильными аргументами
-        mock_llm.delay.assert_called_once_with(123, "")
+        # Проверяем, что delay вызван один раз с правильными аргументами
+        mock_delay.assert_called_once_with(123, "Тестовый вопрос")
         mock_message.answer.assert_called_once()
