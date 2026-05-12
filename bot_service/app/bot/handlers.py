@@ -3,6 +3,7 @@ from aiogram import Router, types
 from aiogram.filters import Command
 from app.core.jwt import decode_and_validate
 from app.infra.redis import get_redis
+from app.tasks.llm_tasks import llm_request
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
