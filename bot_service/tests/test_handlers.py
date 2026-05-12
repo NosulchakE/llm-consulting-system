@@ -1,9 +1,10 @@
 import pytest
-from unittest.mock import AsyncMock, patch
+from unittest.mock import AsyncMock, patch, MagicMock
 from aiogram.types import Message, User, Chat
 from jose import jwt
 from app.core.config import settings
 from app.bot.handlers import cmd_start, cmd_token, handle_message
+
 
 @pytest.fixture
 def mock_message():
@@ -51,10 +52,18 @@ async def test_handle_message_with_token(mock_message):
     token = jwt.encode({"sub": "123", "role": "user"}, settings.JWT_SECRET, algorithm=settings.JWT_ALG)
     with patch("app.bot.handlers.get_redis") as mock_redis, \
          patch("app.bot.handlers.llm_request") as mock_llm:
+        
+        # Настраиваем мок Redis
         mock_redis_instance = AsyncMock()
         mock_redis_instance.get = AsyncMock(return_value=token)
         mock_redis.return_value = mock_redis_instance
-        mock_llm.delay = AsyncMock()
+        
+        # Настраиваем мок llm_request.delay
+        mock_llm.delay = MagicMock()
+        
+        # Вызываем хендлер
         await handle_message(mock_message)
-        mock_llm.delay.assert_called_once()
+        
+        # Проверяем, что delay был вызван один раз с правильными аргументами
+        mock_llm.delay.assert_called_once_with(123, "")
         mock_message.answer.assert_called_once()
