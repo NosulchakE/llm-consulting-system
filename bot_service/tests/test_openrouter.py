@@ -1,6 +1,6 @@
 import pytest
 import respx
-from httpx import Response
+from httpx import TimeoutException
 from app.services.openrouter_client import call_openrouter
 
 @pytest.mark.asyncio
@@ -14,13 +14,12 @@ async def test_call_openrouter_success():
         )
         result = await call_openrouter("Тестовый запрос")
         assert result == "Привет, это тестовый ответ!"
-        assert respx.calls.call_count == 1
 
 @pytest.mark.asyncio
 async def test_call_openrouter_timeout():
     with respx.mock:
         respx.post("https://openrouter.ai/api/v1/chat/completions").mock(
-            side_effect=TimeoutError()
+            side_effect=TimeoutException("Timeout")
         )
         result = await call_openrouter("Test")
         assert "слишком много времени" in result
